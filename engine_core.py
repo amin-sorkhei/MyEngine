@@ -217,12 +217,7 @@ class search_core():
                                                                   _title=self.id_article_dic[paper_id].title,
                                                                   _abstract=self.id_article_dic[paper_id].abstract))
                     _authors.append(author(author_id, _name, _papers))
-                    # ------
-                    print _authors[0].name
-                    print _authors[0].num_of_articles()
-                    print 'Top papers regarding the previous author '
-                    print [item.id for item in _authors[0].top_articles()]
-                    # ------
+
                 # authors is a list of author objects
                 _venue = self.id_article_dic[_id].venue
                 _url = self.id_article_dic[_id].url
