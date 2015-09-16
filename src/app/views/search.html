@@ -1,0 +1,94 @@
+<button back-to-top></button>
+
+<div id="search-container">
+  <div class="wrapper">
+    <button class="btn-grey-blue" id="search-settings-btn" ng-click="toggleShowSettings()" ng-class="{ 'show': !isSearching }"><i class="fa fa-cog"></i> Settings</button>
+
+    <h1 class="text-center">
+      <span ng-show="!searchKeywords">
+        What are you looking for?
+      </span>
+      <span ng-show="searchKeywords">
+        Results for <i>"{[searchKeywords]}"</i>
+      </span>
+    </h1>
+
+    <form ng-submit="search()" ng-show="showSearchInput">
+      <div class="icon-input">
+        <i class="fa fa-search"></i>
+        <input type="text" id="search-keywords" placeholder="Type in your keywords..." ng-model="queryKeywords">
+      </div>
+    </form>
+
+    <div id="option-buttons-container" ng-show="showOptionButtons">
+      <button class="btn-grey-blue" ng-disabled="isLoading" ng-click="newQuery()">
+        <i class="fa fa-search"></i> Start a new search
+      </button>
+
+      <button class="btn-grey-blue" ng-disabled="nextIterationIsDisabled()" ng-click="nextIteration()">
+        Go to the next iteration <i class="fa fa-long-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="loading-container" class="text-center text-muted" ng-show="isLoading">
+  <div class="wrapper">
+    <i class="fa fa-spinner fa-spin"></i> Loading your results<span class="one">.</span><span class="two">.</span><span class="three">.</span>
+  </div>
+</div>
+
+<div id="settings-container" ng-class="{ 'show': showSettings && !isSearching }">
+  <h2>
+    <i class="fa fa-cog"></i> Settings
+    <button class="close" ng-click="toggleShowSettings()">
+      <i class="fa fa-times"></i>
+    </button>
+  </h2>
+  <div class="wrapper">
+    <h3>Show me {[settings.topicCount]} topics</h3>
+    <slider floor="5" ceiling="20" step="1" ng-model="settings.topicCount"></slider>
+    <h3>Show me {[settings.keywordCount]} top keywords from each topic</h3>
+    <slider floor="5" ceiling="20" step="1" ng-model="settings.keywordCount"></slider>
+  </div>
+</div>
+
+<div id="result-container" ng-class="{ 'show': isSearching && !isLoading }">
+  <div class="wrapper">
+    <div id="topics-container">
+      <div ng-repeat="topic in topics" class="topic-container">
+        <div class="topic-articles-container">
+          <h3 class="text-muted">Articles in topic {[topic.topic]}</h3>
+
+          <ul class="item-list">
+            <li ng-repeat="article in topic.articles">
+
+              <div class="article-check" ng-class="{ 'checked': article.selected }" ng-click="toggleArticle(article)">
+                <i class="fa fa-check"></i>
+              </div>
+
+              <h2><a href="#">{[article.title || '[No title]']}</a></h2>
+                <p class="text-muted">
+                  Authors: {[article.authors || '[No authors]']}
+                </p>
+
+                <p keyword-abstract topic-name="topic.topic" keywords="topic.keywords" abstract="article.abstract" keyword-on-click="abstractKeywordClicked"></p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="topic-keywords-container">
+          <h3 class="text-muted">Keywords in topic {[topic.topic]}</h3>
+
+          <div class="check-item" ng-repeat="keyword in topic.keywords" ng-click="toggleKeyword(keyword)" ng-class="{ 'checked': keyword.selected }">
+            {[keyword.label]}
+
+            <div class="checkbox">
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
