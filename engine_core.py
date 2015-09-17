@@ -203,7 +203,10 @@ class search_core():
             search_words_list = []
 
             for article_id in articles_id:
-                _id = article_id
+                '''
+                add 1 to the idea, since in dataset, ids starts from 1 but mallet starts ids from 0
+                '''
+                _id = article_id + 1
                 _title = self.id_article_dic[_id].title
                 _abstract = self.id_article_dic[_id].abstract
                 _matrix = self.doc_topic_matrix[_id, :]
