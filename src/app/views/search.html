@@ -45,6 +45,7 @@
       <i class="fa fa-times"></i>
     </button>
   </h2>
+
   <div class="wrapper">
     <h3>Show me {[settings.topicCount]} topics</h3>
     <slider floor="5" ceiling="20" step="1" ng-model="settings.topicCount"></slider>
@@ -53,12 +54,32 @@
   </div>
 </div>
 
+<div id="author-container" ng-class="{ 'show': showAuthor }">
+  <h2>
+    <i class="fa fa-user"></i> {[chosenAuthor.name]}
+    <button class="close" ng-click="hideAuthor()">
+      <i class="fa fa-times"></i>
+    </button>
+  </h2>
+
+  <div class="wrapper">
+    <h3>Articles related to {[chosenAuthor.name]}</h3>
+    <div class="topic-container">
+      <ul>
+        <li ng-repeat="article in chosenAuthor.articles">
+          <i class="fa fa-check" ng-class="{ 'checked': article.selected }" ng-click="toggleArticle(article)"></i> <a href="#">{[article.title]}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 <div id="result-container" ng-class="{ 'show': isSearching && !isLoading }">
   <div class="wrapper">
     <div id="topics-container">
       <div ng-repeat="topic in topics" class="topic-container">
         <div class="topic-articles-container">
-          <h3 class="text-muted">Articles in topic {[topic.topic]}</h3>
+          <h3 class="text-muted">Articles in topic {[topic.topic]}:</h3>
 
           <ul class="item-list">
             <li ng-repeat="article in topic.articles">
@@ -67,18 +88,27 @@
                 <i class="fa fa-check"></i>
               </div>
 
-              <h2><a href="#">{[article.title || '[No title]']}</a></h2>
+              <h2><a ng-href="{[article.url]}" target="_blank">{[article.title || '[No title]']}</a></h2>
                 <p class="text-muted">
-                  Authors: {[article.authors || '[No authors]']}
+                  Authors: <span class="comma-list"><span class="comma-item anchor" ng-click="chooseAuthor(author)" ng-repeat="author in article.authors">{[author.name]}</span></span> · Venue: {[article.venue]}
                 </p>
 
-                <p keyword-abstract topic-name="topic.topic" keywords="topic.keywords" abstract="article.abstract" keyword-on-click="abstractKeywordClicked"></p>
+                <p keyword-abstract ng-show="article.showAbstract" topic-name="topic.topic" keywords="topic.keywords" abstract="article.abstract" keyword-on-click="abstractKeywordClicked"></p>
+
+                <p class="text-muted" ng-click="toggleAbstract(article)" style="cursor: pointer">
+                  <span ng-hide="article.showAbstract">
+                    <i class="fa fa-plus"></i> Show Abstract
+                  </span>
+                  <span ng-show="article.showAbstract">
+                    <i class="fa fa-minus"></i> Hide Abstract
+                  </span>
+                </p>
             </li>
           </ul>
         </div>
 
         <div class="topic-keywords-container">
-          <h3 class="text-muted">Keywords in topic {[topic.topic]}</h3>
+          <h3 class="text-muted">Keywords in topic {[topic.topic]}:</h3>
 
           <div class="check-item" ng-repeat="keyword in topic.keywords" ng-click="toggleKeyword(keyword)" ng-class="{ 'checked': keyword.selected }">
             {[keyword.label]}

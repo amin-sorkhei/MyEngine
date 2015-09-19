@@ -35,7 +35,19 @@ def search_objects_to_topics(search_objects, desired_number_topics=10, desired_n
         topics[str(topic_name)]['articles'] = []
 
         for article in topic[1]:
-            topics[str(topic_name)]['articles'].append({ 'abstract': article.get_text(), 'id': id_iterator })
+            article_authors = [];
+
+            for author in article.authors:
+                authors_top_articles = []
+
+                for top_article in author.top_articles():
+                    authors_top_articles.append({ 'title': top_article.title, 'id': id_iterator })
+                    iteration_data[str(id_iterator)] = top_article
+                    id_iterator = id_iterator + 1
+
+                article_authors.append({ 'name': author.name, 'id': author.id, 'articles': authors_top_articles })
+
+            topics[str(topic_name)]['articles'].append({ 'abstract': article.get_text(), 'title': article.title, 'id': id_iterator, 'authors': article_authors, 'venue': article.venue, 'url': article.url })
             iteration_data[str(id_iterator)] = article
             id_iterator = id_iterator + 1
 
@@ -79,6 +91,10 @@ def search():
     topics = search_objects_to_topics(search_objects, topic_count, keyword_count)
 
     return jsonify(topics)
+
+@app.route('/api/authors/<id>')
+def author_by_id(id):
+    return jsonify({ 'name': 'Kalle Ilves', 'topics': [{ 'topic': 1, 'articles': [{ 'title': 'Lorem ipsum dolor sit amet', 'id': 1 } for n in range(0, 10)] }] })
 
 if __name__ == '__main__':
     app.run()

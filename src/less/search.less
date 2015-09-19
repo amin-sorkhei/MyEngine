@@ -114,6 +114,8 @@ body{
     width: 70%;
 
     .topic-container{
+      width: 100%;
+
       h3{
         margin-bottom: 0px;
       }
@@ -132,6 +134,14 @@ body{
     .topic-container{
       padding-bottom: 25px;
       border-bottom: 1px solid @light-grey;
+    }
+  }
+}
+
+.comma-list{
+  .comma-item:not(:last-child){
+    &:after{
+      content: ', '
     }
   }
 }
@@ -183,6 +193,7 @@ body{
 .topic-container{
   display: table;
   border-bottom: 1px solid @light-grey;
+  width: 100%;
 
   &:last-child{
     border-bottom: 0px none;
@@ -196,6 +207,7 @@ body{
 
     .item-list{
       li{
+        padding-right: 50px;
         position: relative;
 
         &:first-child{
@@ -205,7 +217,7 @@ body{
         .check-item{
           position: absolute;
           right: 0px;
-          top: -2px;
+          top: -10px;
 
           .checkbox{
             width: 30px;
@@ -227,51 +239,12 @@ body{
   }
 }
 
+#author-container{
+  .right-container
+}
+
 #settings-container{
-  background-color: fadeout(@dark-grey, 5%);
-  color: white;
-  width: 400px;
-  height: 100%;
-  position: fixed;
-  right: -400px;
-  top: 0px;
-  z-index: 99;
-  transition: 0.5s;
-
-  h3{
-    margin-bottom: 0px;
-  }
-
-  &.show{
-    right: 0px;
-    transition: 0.5s;
-  }
-
-  h2{
-    padding: 15px 25px;
-    color: white;
-    margin-top: 0px;
-    text-transform: uppercase;
-    border-bottom: 1px solid fadeout(white, 80%);
-    position: relative;
-
-    .close{
-      cursor: pointer;
-      font-size: 1.1em;
-      color: fadeout(white, 50%);
-      background-color: transparent;
-      border: 0px none;
-      position: absolute;
-      right: 15px;
-      top: 13px;
-      transition: 0.5s;
-
-      &:hover{
-        color: white;
-        transition: 0.5s;
-      }
-    }
-  }
+  .right-container;
 }
 
 .check-item{
@@ -343,10 +316,11 @@ hr{
   padding: 0px;
 
   li{
-    padding: 15px 0px;
+    padding: 0px 0px 15px 0px;
 
     &:last-child{
       border-bottom: 0px none;
+      padding-bottom: 0px;
     }
 
     h2{
@@ -355,7 +329,7 @@ hr{
   }
 }
 
-a{
+a, .anchor{
   color: @blue;
   text-decoration: none;
   transition: 0.5s;
@@ -364,10 +338,7 @@ a{
     color: darken(@blue, 10%);
     text-decoration: none;
     transition: 0.5s;
-  }
-
-  &:visited{
-    color: @blue;
+    cursor: pointer;
   }
 }
 
@@ -391,6 +362,37 @@ a{
 
 .text-muted{
   color: @grey;
+}
+
+#author-container{
+  .topic-container{
+    ul{
+      list-style-type: none;
+      margin: 0px;
+      padding: 0px;
+
+      li{
+        position: relative;
+        padding-left: 20px;
+
+        .fa-check{
+          color: darken(@grey, 5%);
+          position: absolute;
+          top: 4px;
+          left: 0px;
+          cursor: pointer;
+          transition: 0.5s;
+
+          &.checked{
+            color: @blue;
+            transition: 0.5s;
+          }
+        }
+
+        line-height: 1.6em;
+      }
+    }
+  }
 }
 
 .article-check{

@@ -42,13 +42,65 @@
   border: 1px solid #dcdcdc;
   padding: 10px 14px;
   background-color: white;
-  font-size: 14px;
+  font-size: 15px;
   color: #2e2e2e;
   transition: 0.5s;
 }
 .text-input:focus {
   border-color: #0066ff;
   box-shadow: 0px 0px 4px rgba(0, 102, 255, 0.8);
+  transition: 0.5s;
+}
+.right-container {
+  background-color: rgba(22, 23, 32, 0.95);
+  color: white;
+  width: 400px;
+  height: 100%;
+  overflow-y: scroll;
+  position: fixed;
+  right: -400px;
+  top: 0px;
+  z-index: 99;
+  transition: 0.5s;
+}
+.right-container .text-muted {
+  color: #b0b0b0;
+}
+.right-container a {
+  color: white;
+}
+.right-container a:hover {
+  color: white;
+  text-decoration: underline;
+}
+.right-container h3 {
+  margin-bottom: 0px;
+}
+.right-container.show {
+  right: 0px;
+  transition: 0.5s;
+}
+.right-container h2 {
+  padding: 15px 25px;
+  color: white;
+  margin-top: 0px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+.right-container h2 .close {
+  cursor: pointer;
+  font-size: 1.1em;
+  color: rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+  border: 0px none;
+  position: absolute;
+  right: 15px;
+  top: 13px;
+  transition: 0.5s;
+}
+.right-container h2 .close:hover {
+  color: white;
   transition: 0.5s;
 }
 
@@ -62,13 +114,65 @@
   border: 1px solid #dcdcdc;
   padding: 10px 14px;
   background-color: white;
-  font-size: 14px;
+  font-size: 15px;
   color: #2e2e2e;
   transition: 0.5s;
 }
 .text-input:focus {
   border-color: #0066ff;
   box-shadow: 0px 0px 4px rgba(0, 102, 255, 0.8);
+  transition: 0.5s;
+}
+.right-container {
+  background-color: rgba(22, 23, 32, 0.95);
+  color: white;
+  width: 400px;
+  height: 100%;
+  overflow-y: scroll;
+  position: fixed;
+  right: -400px;
+  top: 0px;
+  z-index: 99;
+  transition: 0.5s;
+}
+.right-container .text-muted {
+  color: #b0b0b0;
+}
+.right-container a {
+  color: white;
+}
+.right-container a:hover {
+  color: white;
+  text-decoration: underline;
+}
+.right-container h3 {
+  margin-bottom: 0px;
+}
+.right-container.show {
+  right: 0px;
+  transition: 0.5s;
+}
+.right-container h2 {
+  padding: 15px 25px;
+  color: white;
+  margin-top: 0px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+.right-container h2 .close {
+  cursor: pointer;
+  font-size: 1.1em;
+  color: rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+  border: 0px none;
+  position: absolute;
+  right: 15px;
+  top: 13px;
+  transition: 0.5s;
+}
+.right-container h2 .close:hover {
+  color: white;
   transition: 0.5s;
 }
 @-webkit-keyframes hide {
@@ -105,7 +209,7 @@
 }
 body {
   font-family: "proxima-nova", sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   color: #2e2e2e;
   padding: 0px;
   margin: 0px;
@@ -124,7 +228,7 @@ body {
   border: 1px solid #dcdcdc;
   padding: 10px 14px;
   background-color: white;
-  font-size: 14px;
+  font-size: 15px;
   color: #2e2e2e;
   transition: 0.5s;
   border-radius: 100px;
@@ -208,6 +312,9 @@ body {
   border-right: 1px solid #dcdcdc;
   width: 70%;
 }
+#result-container #articles-container .topic-container {
+  width: 100%;
+}
 #result-container #articles-container .topic-container h3 {
   margin-bottom: 0px;
 }
@@ -222,6 +329,9 @@ body {
 #result-container #keywords-container .topic-container {
   padding-bottom: 25px;
   border-bottom: 1px solid #dcdcdc;
+}
+.comma-list .comma-item:not(:last-child):after {
+  content: ', ';
 }
 .highlight {
   background-color: #FCF8E3;
@@ -254,7 +364,7 @@ body {
   border-radius: 100px;
   border: 1px solid #969696;
   padding: 8px 12px;
-  font-size: 14px;
+  font-size: 15px;
   color: #969696;
   background-color: transparent;
   display: inline-block;
@@ -285,6 +395,7 @@ body {
 .topic-container {
   display: table;
   border-bottom: 1px solid #dcdcdc;
+  width: 100%;
 }
 .topic-container:last-child {
   border-bottom: 0px none;
@@ -296,6 +407,7 @@ body {
   padding-right: 50px;
 }
 .topic-container .topic-articles-container .item-list li {
+  padding-right: 50px;
   position: relative;
 }
 .topic-container .topic-articles-container .item-list li:first-child {
@@ -304,7 +416,7 @@ body {
 .topic-container .topic-articles-container .item-list li .check-item {
   position: absolute;
   right: 0px;
-  top: -2px;
+  top: -10px;
 }
 .topic-container .topic-articles-container .item-list li .check-item .checkbox {
   width: 30px;
@@ -318,16 +430,79 @@ body {
   display: table-cell;
   width: 30%;
 }
-#settings-container {
+#author-container {
   background-color: rgba(22, 23, 32, 0.95);
   color: white;
   width: 400px;
   height: 100%;
+  overflow-y: scroll;
   position: fixed;
   right: -400px;
   top: 0px;
   z-index: 99;
   transition: 0.5s;
+}
+#author-container .text-muted {
+  color: #b0b0b0;
+}
+#author-container a {
+  color: white;
+}
+#author-container a:hover {
+  color: white;
+  text-decoration: underline;
+}
+#author-container h3 {
+  margin-bottom: 0px;
+}
+#author-container.show {
+  right: 0px;
+  transition: 0.5s;
+}
+#author-container h2 {
+  padding: 15px 25px;
+  color: white;
+  margin-top: 0px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+#author-container h2 .close {
+  cursor: pointer;
+  font-size: 1.1em;
+  color: rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+  border: 0px none;
+  position: absolute;
+  right: 15px;
+  top: 13px;
+  transition: 0.5s;
+}
+#author-container h2 .close:hover {
+  color: white;
+  transition: 0.5s;
+}
+#settings-container {
+  background-color: rgba(22, 23, 32, 0.95);
+  color: white;
+  width: 400px;
+  height: 100%;
+  overflow-y: scroll;
+  position: fixed;
+  right: -400px;
+  top: 0px;
+  z-index: 99;
+  transition: 0.5s;
+}
+#settings-container .text-muted {
+  color: #b0b0b0;
+}
+#settings-container a {
+  color: white;
+}
+#settings-container a:hover {
+  color: white;
+  text-decoration: underline;
 }
 #settings-container h3 {
   margin-bottom: 0px;
@@ -416,26 +591,27 @@ hr {
   padding: 0px;
 }
 .item-list li {
-  padding: 15px 0px;
+  padding: 0px 0px 15px 0px;
 }
 .item-list li:last-child {
   border-bottom: 0px none;
+  padding-bottom: 0px;
 }
 .item-list li h2 {
   margin-top: 0px;
 }
-a {
+a,
+.anchor {
   color: #0066ff;
   text-decoration: none;
   transition: 0.5s;
 }
-a:hover {
+a:hover,
+.anchor:hover {
   color: #0052cc;
   text-decoration: none;
   transition: 0.5s;
-}
-a:visited {
-  color: #0066ff;
+  cursor: pointer;
 }
 .icon-input {
   position: relative;
@@ -452,7 +628,7 @@ a:visited {
   border-radius: 100px;
   border: 1px solid #969696;
   padding: 8px 12px;
-  font-size: 14px;
+  font-size: 15px;
   color: #969696;
   background-color: transparent;
   display: inline-block;
@@ -477,6 +653,28 @@ a:visited {
 }
 .text-muted {
   color: #969696;
+}
+#author-container .topic-container ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+#author-container .topic-container ul li {
+  position: relative;
+  padding-left: 20px;
+  line-height: 1.6em;
+}
+#author-container .topic-container ul li .fa-check {
+  color: #898989;
+  position: absolute;
+  top: 4px;
+  left: 0px;
+  cursor: pointer;
+  transition: 0.5s;
+}
+#author-container .topic-container ul li .fa-check.checked {
+  color: #0066ff;
+  transition: 0.5s;
 }
 .article-check {
   cursor: pointer;

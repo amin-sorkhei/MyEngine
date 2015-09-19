@@ -1,5 +1,6 @@
 SearchApp.controller('SearchController', function(API, $scope){
   var keywordSelectionHistory = {};
+  var articleSelectionHistory = {};
   var iterationSelections = [];
 
   $scope.showSearchInput = true;
@@ -10,6 +11,19 @@ SearchApp.controller('SearchController', function(API, $scope){
 
   $scope.toggleShowSettings = function(){
       $scope.showSettings = !$scope.showSettings;
+  }
+
+  $scope.toggleAbstract = function(article){
+    article.showAbstract = !article.showAbstract
+  }
+
+  $scope.chooseAuthor = function(author){
+    $scope.chosenAuthor = author;
+    $scope.showAuthor = true;
+  }
+
+  $scope.hideAuthor = function(){
+    $scope.showAuthor = false;
   }
 
   $scope.newQuery = function(){
@@ -27,29 +41,43 @@ SearchApp.controller('SearchController', function(API, $scope){
       return true;
     }
 
-    var selectedArticles = _.chain($scope.topics)
+    var selectedArticlesCount = _.chain($scope.topics)
       .reduce(function(all, topic){
         return all.concat(topic.articles);
       }, [])
       .where({ selected: true })
-      .value();
+      .value()
+      .length;
 
-    var selectedKeywords = _.chain($scope.topics)
+    var selectedKeywordsCount = _.chain($scope.topics)
       .reduce(function(all, topic){
         return all.concat(topic.keywords);
       }, [])
       .where({ selected: true })
-      .value();
+      .value()
+      .length;
 
-    return ( selectedArticles.length + selectedKeywords.length ) == 0;
+    var selectedAuthorArticlesCount = _.chain($scope.topics)
+      .reduce(function(all, topic){
+        return all.concat(topic.articles);
+      }, [])
+      .reduce(function(all, article){
+        return all.concat(article.authors)
+      }, [])
+      .reduce(function(all, author){
+        return all.concat(author.articles)
+      }, [])
+      .where({ selected: true })
+      .value()
+      .length;
+
+    return ( selectedArticlesCount + selectedKeywordsCount + selectedAuthorArticlesCount ) == 0;
   }
 
   $scope.nextIteration = function(){
     window.scrollTo(0, 0);
 
     $scope.isLoading = true;
-
-    console.log(iterationSelections);
 
     var selectionIds = _.map(iterationSelections, function(selection){ return selection.id });
 
@@ -59,9 +87,11 @@ SearchApp.controller('SearchController', function(API, $scope){
 
       for(topicName in rawTopics){
         rawTopics[topicName].keywords.forEach(function(keyword){
-          if(keywordSelectionHistory[keyword.label]){
-            keyword.selected = true;
-          }
+          keyword.selected = keywordSelectionHistory[keyword.label];
+        });
+
+        rawTopics[topicName].articles.forEach(function(article){
+          article.selected = articleSelectionHistory[article.id]
         });
 
         $scope.topics.push({
@@ -90,6 +120,9 @@ SearchApp.controller('SearchController', function(API, $scope){
   }
 
   $scope.search = function(){
+    keywordSelectionHistory = {};
+    articleSelectionHistory = {};
+
     $scope.searchKeywords = $scope.queryKeywords;
     $scope.showOptionButtons = true;
     $scope.showSearchInput = false;
@@ -105,7 +138,7 @@ SearchApp.controller('SearchController', function(API, $scope){
           topic: topicName,
           keywords: rawTopics[topicName].keywords,
           articles: rawTopics[topicName].articles
-        })
+        });
       }
 
       $scope.isLoading = false;
@@ -126,6 +159,8 @@ SearchApp.controller('SearchController', function(API, $scope){
 
   $scope.toggleArticle = function(article){
     article.selected = !article.selected;
+
+    articleSelectionHistory[article.id] = article.selected;
 
     if(article.selected){
       iterationSelections.push(article);
