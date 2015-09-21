@@ -3,6 +3,18 @@ SearchApp.controller('SearchController', function(API, $scope){
   var articleSelectionHistory = {};
   var iterationSelections = [];
 
+  function setSelections(){
+    $scope.topics.forEach(function(topic){
+      topic.keywords.forEach(function(keyword){
+        keyword.selected = keywordSelectionHistory[keyword.label];
+      });
+
+      topic.articles.forEach(function(article){
+        article.selected = articleSelectionHistory[article.id]
+      });
+    });
+  }
+
   $scope.showSearchInput = true;
   $scope.settings = {
     topicCount: 10,
@@ -82,24 +94,9 @@ SearchApp.controller('SearchController', function(API, $scope){
     var selectionIds = _.map(iterationSelections, function(selection){ return selection.id });
 
     API.next({ selections: selectionIds }).then(function(results){
-      rawTopics = results.data;
-      $scope.topics = [];
+      $scope.topics = results.data;
 
-      for(topicName in rawTopics){
-        rawTopics[topicName].keywords.forEach(function(keyword){
-          keyword.selected = keywordSelectionHistory[keyword.label];
-        });
-
-        rawTopics[topicName].articles.forEach(function(article){
-          article.selected = articleSelectionHistory[article.id]
-        });
-
-        $scope.topics.push({
-          topic: topicName,
-          keywords: rawTopics[topicName].keywords,
-          articles: rawTopics[topicName].articles
-        })
-      }
+      setSelections();
 
       $scope.isLoading = false;
     });
@@ -130,17 +127,7 @@ SearchApp.controller('SearchController', function(API, $scope){
     $scope.isLoading = true;
 
     API.search({ keywords: $scope.queryKeywords, topicCount: $scope.settings.topicCount, keywordCount: $scope.settings.keywordCount }).then(function(results){
-      rawTopics = results.data;
-      $scope.topics = [];
-
-      for(topicName in rawTopics){
-        $scope.topics.push({
-          topic: topicName,
-          keywords: rawTopics[topicName].keywords,
-          articles: rawTopics[topicName].articles
-        });
-      }
-
+      $scope.topics = results.data;
       $scope.isLoading = false;
     });
   }
