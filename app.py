@@ -14,6 +14,7 @@ def search_objects_to_topics(search_objects, desired_number_topics=10, desired_n
     search_service.set_desired_number_top_words(desired_number_top_words)
     top_words_results, top_articles_result = search_service.search()
 
+
     global iteration_data
 
     topics = {}
