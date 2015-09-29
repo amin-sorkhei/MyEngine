@@ -1,8 +1,13 @@
 __author__ = 'sorkhei'
-version = '2.0'
+version = '2.01'
+"""
+New to version 2.01
+ability to show more articles and papers
+"""
 import nltk
 import pickle
 import numpy as np
+import copy
 import lemmagen
 from lemmagen.lemmatizer import Lemmatizer
 from article_author2 import article
@@ -30,35 +35,67 @@ class author:
         self.name = _name
         # papers is a list of mini article search objects
         self.papers = _papers
+        self.displayed_papers_ids = []
+        self.info = 'Number of papers published by this author : ' + str(self.number_of_articles())
+        self.number_of_papers = len(self.papers)
 
-    def num_of_articles(self):
-        """
-        returns the number of articles published by this author
-        """
+    def number_of_articles(self):
         return len(self.papers)
 
-    def top_articles(self):
+    def get_info(self):
+        return self.info
+
+    def top_articles(self, caller_paper_id):
         """
-        the method that GUI deals with when an author is clicked. This function returns
+        Caller_paper_id is the id of the paper from which the author is being called
+
+        The method that GUI deals with when an author is clicked. This function returns
         a list of mini_search_article objects
-        If the number of published papers is less than 5, all articles are returned otherwise some measurements
-        will be taken into account -- that is -- research areas of the author is detected and two mostly related
-        papers will be displayed there regarding each topic.
+
+        If the author has published only one paper, the an empty list is returned
+
+        If the number of published papers is less than 6, all articles are returned a list of papers
+
+        other wise, some measurements will be taken into account -- that is -- research areas of the author is detected
+        and two mostly related papers will be displayed there regarding each topic.
+        If the author has published more than 5 papers, a list of 3 tuples will be returned
+        where the first element is topic number and the second argument is a list of paper objects
         """
         num_of_top_topics = 3
+        selected_papers = []
+        if caller_paper_id not in self.displayed_papers_ids:
+            self.displayed_papers_ids.append(caller_paper_id)
 
-        if self.num_of_articles() < 6:
-            return self.papers
+        if self.num_of_articles() == 1:
+            return []
+
+        elif self.num_of_articles() < 6:
+            return [paper for paper in self.papers if paper.get_id() != caller_paper_id]
         else:
-            selected_papers = []
             paper_matrix = np.array([paper.get_vector() for paper in self.papers])
             sum_matrix = np.sum(paper_matrix, 0)
             top_topics = np.argsort(sum_matrix)[::-1][0:num_of_top_topics]
             for top_topic in top_topics:
-                indices = np.argsort(paper_matrix[:, top_topic])[::-1][0:2]
-                [selected_papers.append(self.papers[index]) for index in indices]
+                tmp_papers = []
+                indices = np.argsort(paper_matrix[:, top_topic])[::-1]
+                for index in indices:
+                    paper = self.papers[index]
+                    tmp_papers.append(paper)
+
+                tmp_papers = [paper for paper in tmp_papers if paper.get_id() != caller_paper_id][0:2]
+                self.displayed_papers_ids += [paper.get_id() for paper in tmp_papers]
+                selected_papers.append((top_topic, tmp_papers))
         return selected_papers
 
+    def show_more(self):
+        """
+        This function returns a list of 10 papers, if an empty list is returned, then there is no more paper to show
+        """
+        available_papers = [paper for paper in self.papers if paper.get_id() not in self.displayed_papers_ids]
+        ''' update displayed papers '''
+        selected_papers = available_papers[0:10]
+        self.displayed_papers_ids += [paper.get_id() for paper in selected_papers]
+        return selected_papers
 
 
 class mini_article_search_object(search_object):
@@ -76,8 +113,8 @@ class article_search_object(search_object):
         self.venue = _venue
         self.url = _link
 
-    def get_text(self):
-        return self.title + '\n' + ','.join([_author.name for _author in self.authors]) + '\n' + self.text + '\n' + self.venue + '\n' + self.url
+    # def get_text(self):
+        # return self.title + '\n' + ','.join([_author.name for _author in self.authors]) + '\n' + self.text + '\n' + self.venue + '\n' + self.url
 
 
 class search_core():
@@ -93,16 +130,20 @@ class search_core():
         self.id_article_dic = pickle.load(open('id_article_dic.pkl'))
 
         self.stemmer = nltk.PorterStemmer()
-        # self.stemmer = Lemmatizer(dictionary=lemmagen.DICTIONARY_ENGLISH)
+        #self.stemmer = Lemmatizer(dictionary=lemmagen.DICTIONARY_ENGLISH)
         self.query = ''
         self.desired_top_topics = 0
         self.desired_top_words = 0
         self.desired_top_articles = 2
+        self.total_number_of_selected_articles = 50
+        self.total_number_of_selected_words = 50
 
     def reset(self):
         self.query = []
         self.desired_top_topics = 0
         self.desired_top_words = 0
+        self.total_number_of_selected_articles = 50
+        self.total_number_of_selected_words = 50
 
     def word_valideator(self, word):
         return self.stem(word.lower()) in self.word_id_dic.keys()
@@ -187,13 +228,19 @@ class search_core():
         return top_topics
 
     def topic_article_finder(self, top_topics):
+        """
+        total_number_of_articles and total_number_of_words have been selected and returned as tuples
+        where the first element of the tuple is the topic number and the second element is the list of  either
+        keywords or articles
+        """
+
         topic_search_words_tuples = []
         topic_search_articles_tuples = []
         search_articles_list = []
         search_words_list = []
         for topic in top_topics:
-            words_id = np.argsort(self.word_topic_matrix[:, topic])[::-1][0:self.desired_top_words]
-            articles_id = np.argsort(self.doc_topic_matrix[:, topic])[::-1][0:self.desired_top_articles]
+            words_id = np.argsort(self.word_topic_matrix[:, topic])[::-1][0:self.total_number_of_selected_words]
+            articles_id = np.argsort(self.doc_topic_matrix[:, topic])[::-1][0:self.total_number_of_selected_articles]
             for word_id in words_id:
                 _id = word_id
                 _text = self.id_word_dic[_id]

@@ -17,23 +17,28 @@ def search_objects_to_topics(search_objects, desired_number_topics=10, desired_n
 
     global iteration_data
 
-    topics = {}
+    topics = []
     iteration_data = {}
     id_iterator = 0
 
     for topic in top_words_results:
         topic_name = topic[0]
-        topics[str(topic_name)] = {}
-        topics[str(topic_name)]['keywords'] = []
+        t = { 'topic': topic_name }
+        t['keywords'] = []
 
         for keyword in topic[1]:
-            topics[str(topic_name)]['keywords'].append({ 'label': keyword.get_text(), 'id': id_iterator })
+            t['keywords'].append({ 'label': keyword.get_text(), 'id': id_iterator })
             iteration_data[str(id_iterator)] = keyword
             id_iterator = id_iterator + 1
 
+        topics.append(t)
+
     for topic in top_articles_result:
         topic_name = topic[0]
-        topics[str(topic_name)]['articles'] = []
+
+        t = filter(lambda target: target['topic'] == topic_name, topics)[0]
+
+        t['articles'] = []
 
         for article in topic[1]:
             article_authors = [];
@@ -48,7 +53,8 @@ def search_objects_to_topics(search_objects, desired_number_topics=10, desired_n
 
                 article_authors.append({ 'name': author.name, 'id': author.id, 'articles': authors_top_articles })
 
-            topics[str(topic_name)]['articles'].append({ 'abstract': article.get_text(), 'title': article.title, 'id': id_iterator, 'authors': article_authors, 'venue': article.venue, 'url': article.url })
+            t['articles'].append({ 'abstract': article.get_text(), 'title': article.title, 'id': id_iterator, 'authors': article_authors, 'venue': article.venue, 'url': article.url })
+
             iteration_data[str(id_iterator)] = article
             id_iterator = id_iterator + 1
 
@@ -76,11 +82,12 @@ def next():
     search_objects = []
 
     for selection in selections:
-        search_objects.append(iteration_data[str(selection)])
+        if str(selection) in iteration_data:
+            search_objects.append(iteration_data[str(selection)])
 
     topics = search_objects_to_topics(search_objects, 10, 10)
 
-    return jsonify(topics)
+    return json.dumps(topics)
 
 @app.route('/api/search', methods=['GET'])
 def search():
@@ -91,7 +98,7 @@ def search():
 
     topics = search_objects_to_topics(search_objects, topic_count, keyword_count)
 
-    return jsonify(topics)
+    return json.dumps(topics)
 
 @app.route('/api/authors/<id>')
 def author_by_id(id):
