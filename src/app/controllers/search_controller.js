@@ -228,6 +228,10 @@ SearchApp.controller('SearchController', function(API, $scope){
   $scope.moreArticlesFromAuthor = function(){
     API.moreArticlesFromAuthor({ index: $scope.chosenAuthor.index })
       .then(function(articles){
+        articles.data.forEach(function(article){
+          article.selected = articleSelectionHistory[article.realId];
+        });
+
         $scope.chosenAuthor.otherArticles = $scope.chosenAuthor.otherArticles || [];
         $scope.chosenAuthor.otherArticles = $scope.chosenAuthor.otherArticles.concat(articles.data);
         $scope.chosenAuthor.moreArticlesDisplaying = true;
