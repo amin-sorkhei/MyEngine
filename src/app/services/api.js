@@ -8,4 +8,8 @@ SearchApp.service('API', function($http){
   this.next = function(options){
     return $http.post('api/next', options.selections);
   }
+
+  this.moreArticlesFromAuthor = function(options){
+    return $http.get('api/more_articles_from_author/' + options.index);
+  }
 });

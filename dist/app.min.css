@@ -66,10 +66,12 @@
 .right-container .text-muted {
   color: #b0b0b0;
 }
-.right-container a {
+.right-container a,
+.right-container .anchor {
   color: white;
 }
-.right-container a:hover {
+.right-container a:hover,
+.right-container .anchor:hover {
   color: white;
   text-decoration: underline;
 }
@@ -138,10 +140,12 @@
 .right-container .text-muted {
   color: #b0b0b0;
 }
-.right-container a {
+.right-container a,
+.right-container .anchor {
   color: white;
 }
-.right-container a:hover {
+.right-container a:hover,
+.right-container .anchor:hover {
   color: white;
   text-decoration: underline;
 }
@@ -445,10 +449,12 @@ body {
 #author-container .text-muted {
   color: #b0b0b0;
 }
-#author-container a {
+#author-container a,
+#author-container .anchor {
   color: white;
 }
-#author-container a:hover {
+#author-container a:hover,
+#author-container .anchor:hover {
   color: white;
   text-decoration: underline;
 }
@@ -482,6 +488,9 @@ body {
   color: white;
   transition: 0.5s;
 }
+#author-container .topic-container {
+  border-bottom: 0px none;
+}
 #settings-container {
   background-color: rgba(22, 23, 32, 0.95);
   color: white;
@@ -497,10 +506,12 @@ body {
 #settings-container .text-muted {
   color: #b0b0b0;
 }
-#settings-container a {
+#settings-container a,
+#settings-container .anchor {
   color: white;
 }
-#settings-container a:hover {
+#settings-container a:hover,
+#settings-container .anchor:hover {
   color: white;
   text-decoration: underline;
 }
@@ -699,7 +710,7 @@ a:hover,
 }
 .wrapper {
   max-width: 1300px;
-  padding: 0px 25px;
+  padding: 0px 25px 25px 25px;
   margin: 0px auto;
   position: relative;
 }

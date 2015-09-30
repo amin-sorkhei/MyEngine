@@ -64,12 +64,51 @@
 
   <div class="wrapper">
     <h3>Articles related to {[chosenAuthor.name]}</h3>
-    <div class="topic-container">
+    <p class="text-muted">
+      <ng-pluralize count="chosenAuthor.numArticles" when="{'0': 'Author has no articles.', 'one': 'Author has one article.', 'other': 'Author has {} articles.'}">
+    </p>
+
+    <div class="topic-container" ng-if="chosenAuthor.numArticles < 6">
       <ul>
         <li ng-repeat="article in chosenAuthor.articles">
-          <i class="fa fa-check" ng-class="{ 'checked': article.selected }" ng-click="toggleArticle(article)"></i> <a href="#">{[article.title]}</a>
+          <i class="fa fa-check" ng-class="{ 'checked': article.selected }" ng-click="toggleArticle(article)"></i> <span class="anchor" ng-click="toggleAbstract(article)">{[article.title]}</span>
+
+          <p ng-show="article.showAbstract" class="text-muted">
+            {[article.abstract]}
+          </p>
         </li>
       </ul>
+    </div>
+
+    <div ng-if="chosenAuthor.numArticles >= 6">
+      <div class="topic-container" ng-repeat="topic in chosenAuthor.articles">
+        <p class="text-muted">Articles in topic {[topic.topic]}:</p>
+        <ul>
+          <li ng-repeat="article in topic.articles">
+            <i class="fa fa-check" ng-class="{ 'checked': article.selected }" ng-click="toggleArticle(article)"></i> <span class="anchor" ng-click="toggleAbstract(article)">{[article.title]}</span>
+            <p ng-show="article.showAbstract" class="text-muted">
+              {[article.abstract]}
+            </p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="topic-container" ng-show="chosenAuthor.moreArticlesDisplaying">
+        <p class="text-muted">Other articles:</p>
+        <ul>
+          <li ng-repeat="article in chosenAuthor.otherArticles">
+            <i class="fa fa-check" ng-class="{ 'checked': article.selected }" ng-click="toggleArticle(article)"></i> <span class="anchor" ng-click="toggleAbstract(article)">{[article.title]}</span>
+
+            <p ng-show="article.showAbstract" class="text-muted">
+              {[article.abstract]}
+            </p>
+          </li>
+        </ul>
+      </div>
+
+      <p class="text-center" ng-hide="chosenAuthor.noMoreArticles">
+        <span class="anchor" ng-click="moreArticlesFromAuthor()"><i class="fa fa-plus" style="margin-right: 10px"></i>Show more articles</span>
+      </p>
     </div>
   </div>
 </div>
@@ -82,7 +121,7 @@
           <h3 class="text-muted">Articles in topic {[topic.topic]}:</h3>
 
           <ul class="item-list">
-            <li ng-repeat="article in topic.articles">
+            <li ng-repeat="article in topic.articles | limitTo: topic.articlesDisplaying">
 
               <div class="article-check" ng-class="{ 'checked': article.selected }" ng-click="toggleArticle(article)">
                 <i class="fa fa-check"></i>
@@ -105,18 +144,25 @@
                 </p>
             </li>
           </ul>
+          <p class="text-center">
+            <button class="btn-grey-blue" ng-click="showMoreArticles(topic)" ng-disabled="topic.articlesDisplaying >= 50"><i class="fa fa-plus"></i> Show more articles</button>
+          </p>
         </div>
 
         <div class="topic-keywords-container">
           <h3 class="text-muted">Keywords in topic {[topic.topic]}:</h3>
 
-          <div class="check-item" ng-repeat="keyword in topic.keywords" ng-click="toggleKeyword(keyword)" ng-class="{ 'checked': keyword.selected }">
+          <div class="check-item" ng-repeat="keyword in topic.keywords | limitTo: topic.keywordsDisplaying" ng-click="toggleKeyword(keyword)" ng-class="{ 'checked': keyword.selected }">
             {[keyword.label]}
 
             <div class="checkbox">
               <span></span>
             </div>
           </div>
+
+          <p class="text-center">
+            <button class="btn-grey-blue" ng-click="showMoreKeywords(topic)" ng-disabled="topic.keywordsDisplaying >= 50"><i class="fa fa-plus"></i> Show more keywords</button>
+          </p>
         </div>
       </div>
     </div>

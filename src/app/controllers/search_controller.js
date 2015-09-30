@@ -5,12 +5,41 @@ SearchApp.controller('SearchController', function(API, $scope){
 
   function setSelections(){
     $scope.topics.forEach(function(topic){
+      topic.articlesDisplaying = 2;
+      topic.keywordsDisplaying = $scope.settings.keywordCount;
+
       topic.keywords.forEach(function(keyword){
         keyword.selected = keywordSelectionHistory[keyword.label];
       });
 
       topic.articles.forEach(function(article){
-        article.selected = articleSelectionHistory[article.id]
+        article.selected = articleSelectionHistory[article.realId]
+      });
+    });
+  }
+
+  function selectArticlesWithId(id){
+    $scope.topics.forEach(function(topic){
+      topic.articles.forEach(function(article){
+        article.selected = article.selected || ( article.realId == id );
+
+        article.authors.forEach(function(author){
+          author.articles.forEach(function(item){
+            if(author.numArticles < 6){
+              item.selected = item.selected || ( item.realId == id );
+            }else{
+              item.articles.forEach(function(article){
+                article.selected = article.selected || ( article.realId == id );
+              });
+            }
+          });
+
+          if(author.otherArticles){
+            author.otherArticles.forEach(function(article){
+              article.selected = article.selected || ( article.realId == id );
+            });
+          }
+        });
       });
     });
   }
@@ -30,6 +59,18 @@ SearchApp.controller('SearchController', function(API, $scope){
   }
 
   $scope.chooseAuthor = function(author){
+    if(author.numArticles < 6){
+      author.articles.forEach(function(article){
+        article.selected = articleSelectionHistory[article.realId]
+      });
+    }else{
+      author.articles.forEach(function(topic){
+        topic.articles.forEach(function(article){
+          article.selected = articleSelectionHistory[article.realId]
+        });
+      });
+    }
+
     $scope.chosenAuthor = author;
     $scope.showAuthor = true;
   }
@@ -69,19 +110,7 @@ SearchApp.controller('SearchController', function(API, $scope){
       .value()
       .length;
 
-    var selectedAuthorArticlesCount = _.chain($scope.topics)
-      .reduce(function(all, topic){
-        return all.concat(topic.articles);
-      }, [])
-      .reduce(function(all, article){
-        return all.concat(article.authors)
-      }, [])
-      .reduce(function(all, author){
-        return all.concat(author.articles)
-      }, [])
-      .where({ selected: true })
-      .value()
-      .length;
+    var selectedAuthorArticlesCount = 0;
 
     return ( selectedArticlesCount + selectedKeywordsCount + selectedAuthorArticlesCount ) == 0;
   }
@@ -89,6 +118,7 @@ SearchApp.controller('SearchController', function(API, $scope){
   $scope.nextIteration = function(){
     window.scrollTo(0, 0);
 
+    $scope.showAuthor = false;
     $scope.isLoading = true;
 
     var selectionIds = _.map(iterationSelections, function(selection){ return selection.id });
@@ -128,8 +158,22 @@ SearchApp.controller('SearchController', function(API, $scope){
 
     API.search({ keywords: $scope.queryKeywords, topicCount: $scope.settings.topicCount, keywordCount: $scope.settings.keywordCount }).then(function(results){
       $scope.topics = results.data;
+
+      $scope.topics.forEach(function(topic){
+        topic.articlesDisplaying = 2;
+        topic.keywordsDisplaying = $scope.settings.keywordCount;
+      });
+
       $scope.isLoading = false;
     });
+  }
+
+  $scope.showMoreArticles = function(topic){
+    topic.articlesDisplaying += 5;
+  }
+
+  $scope.showMoreKeywords = function(topic){
+    topic.keywordsDisplaying += 10;
   }
 
   $scope.toggleKeyword = function(keyword){
@@ -144,12 +188,26 @@ SearchApp.controller('SearchController', function(API, $scope){
     }
   }
 
+  $scope.moreArticlesFromAuthor = function(){
+    API.moreArticlesFromAuthor({ index: $scope.chosenAuthor.index })
+      .then(function(articles){
+        $scope.chosenAuthor.otherArticles = $scope.chosenAuthor.otherArticles || [];
+        $scope.chosenAuthor.otherArticles = $scope.chosenAuthor.otherArticles.concat(articles.data);
+        $scope.chosenAuthor.moreArticlesDisplaying = true;
+
+        if(articles.data.length == 0){
+          $scope.chosenAuthor.noMoreArticles = true;
+        }
+      });
+  }
+
   $scope.toggleArticle = function(article){
     article.selected = !article.selected;
 
-    articleSelectionHistory[article.id] = article.selected;
+    articleSelectionHistory[article.realId] = article.selected;
 
     if(article.selected){
+      selectArticlesWithId(article.realId);
       iterationSelections.push(article);
     }else{
       _.remove(iterationSelections, function(selection){ return selection.id == article.id });

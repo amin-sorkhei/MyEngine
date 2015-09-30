@@ -36,10 +36,10 @@ class author:
         # papers is a list of mini article search objects
         self.papers = _papers
         self.displayed_papers_ids = []
-        self.info = 'Number of papers published by this author : ' + str(self.number_of_articles())
+        self.info = 'Number of papers published by this author : ' + str(self.num_of_articles())
         self.number_of_papers = len(self.papers)
 
-    def number_of_articles(self):
+    def num_of_articles(self):
         return len(self.papers)
 
     def get_info(self):
@@ -101,6 +101,8 @@ class author:
 class mini_article_search_object(search_object):
     def __init__(self, _id, _matrix, _title, _abstract):
         super(mini_article_search_object, self).__init__(_abstract, _id, _matrix)
+        self.abstract = _abstract
+        self.id = _id
         self.title = _title
 
 
