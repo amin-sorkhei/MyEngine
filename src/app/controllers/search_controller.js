@@ -138,7 +138,6 @@ SearchApp.controller('SearchController', function(API, $scope){
         }else{
           item.articles.forEach(function(article){
             if(article.selected){
-              console.log(article);
               selectedAuthorArticleFound = true;
             }
           });
@@ -146,7 +145,7 @@ SearchApp.controller('SearchController', function(API, $scope){
       });
 
       if(author.otherArticles){
-        if(_.where(author.otherArticles, { selected: true }).length > 0) return false;
+        if(_.where(author.otherArticles, { selected: true }).length > 0) selectedAuthorArticleFound = true;
       }
     });
 
